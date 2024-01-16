@@ -1,1 +1,4 @@
 .venv/
+temp/
+config.py
+Date Tracker.csv
