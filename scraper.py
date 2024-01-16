@@ -1,6 +1,11 @@
 import requests
 from bs4 import BeautifulSoup
+from re import sub
 import csv
+import os
+from AttachementsDownloader import download_attachement
+from MailGenerator import generate_email
+from sender import send
 
 file_path = 'Date Tracker.csv'
 
@@ -66,10 +71,19 @@ def process_and_store_article(title, date_str, content, attachments):
         print(f"Attachment: {attachment_name} - {attachment_link}")
     print()
 
-    # attachment_id = ', '.join([attachement['href'].split('/')[-1] for attachement in attachments])
-    # attachement_links = ['https://www.est-umi.ac.ma/'+attachment['href'] for attachment in attachments]
+    attachement_id = ', '.join([attachement['href'].split('/')[-1] for attachement in attachments])
+    attachement_links = ['https://www.est-umi.ac.ma/'+attachment['href'] for attachment in attachments]
+    file_names = []
+    for link in attachement_links:
+        file_names.append(os.path.join(os.getcwd(), 'Attachements', sub(r'[^\w.-]', '_', link.split('/')[-1])))
+
+    print(file_names)
+    email = generate_email(encoded_title, content, attachement_id)
+    download_attachement(attachement_links)
+
+    send(encoded_title, email, file_names)
 
 parsed_date = read_csv_file(file_path)[-1].split('-')
 
-if __name__ == "__main__":
-    scrape_uni_website(parsed_date)
+scrape_uni_website(parsed_date)
+
