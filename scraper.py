@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from re import sub
+import re
 import csv
 import os
 from AttachementsDownloader import download_attachement
@@ -23,6 +23,19 @@ def write_csv_date(file_path, new_date):
 def check_date(date1, date2):
     if date1[0]>date2[0] or (date1[0]==date2[0] and date1[1]>date2[1]) or (date1[0]==date2[0] and date1[1]==date2[1] and date1[2]>date2[2]): return True
     else: return False
+
+def check_tags(content):
+    to_send = False
+    targets = []
+
+    if "#SEND#" in content: to_send = True
+
+    match = re.search(r'#TO:\s*([A-Z,\s]+)#', content)
+
+    if match:
+        targets = [target.strip() for target in match.group(1).split(',')]
+
+    return to_send, targets
 
 def scrape_uni_website(old_date:list[str]):
     global content, attachments
@@ -75,15 +88,14 @@ def process_and_store_article(title, date_str, content, attachments):
     attachement_links = ['https://www.est-umi.ac.ma/'+attachment['href'] for attachment in attachments]
     file_names = []
     for link in attachement_links:
-        file_names.append(os.path.join(os.getcwd(), 'Attachements', sub(r'[^\w.-]', '_', link.split('/')[-1])))
+        file_names.append(os.path.join(os.getcwd(), 'Attachements', re.sub(r'[^\w.-]', '_', link.split('/')[-1])))
 
-    print(file_names)
-    email = generate_email(encoded_title, content, attachement_id)
-    download_attachement(attachement_links)
-
-    send(encoded_title, email, file_names)
+    to_send, targets = check_tags(content)
+    
+    if to_send:
+        email = generate_email(encoded_title, content, attachement_id, ', '.join(targets))
+        download_attachement(attachement_links)
+        send(encoded_title, email, file_names)
 
 parsed_date = read_csv_file(file_path)[-1].split('-')
-
 scrape_uni_website(parsed_date)
-
