@@ -30,10 +30,10 @@ def check_tags(content):
 
     if "#SEND#" in content: to_send = True
 
-    match = re.search(r'#TO:([A-Z,]+)#', content)
-    print(match)
+    match = re.search(r'#TO:\s*([A-Z,\s]+)#', content)
+
     if match:
-        targets = match.group(1).split(',')
+        targets = [target.strip() for target in match.group(1).split(',')]
 
     return to_send, targets
 
@@ -90,13 +90,12 @@ def process_and_store_article(title, date_str, content, attachments):
     for link in attachement_links:
         file_names.append(os.path.join(os.getcwd(), 'Attachements', re.sub(r'[^\w.-]', '_', link.split('/')[-1])))
 
-    to_send, target = check_tags(content)
+    to_send, targets = check_tags(content)
     
     if to_send:
-        email = generate_email(encoded_title, content, attachement_id)
+        email = generate_email(encoded_title, content, attachement_id, ', '.join(targets))
         download_attachement(attachement_links)
         send(encoded_title, email, file_names)
 
 parsed_date = read_csv_file(file_path)[-1].split('-')
-
 scrape_uni_website(parsed_date)
