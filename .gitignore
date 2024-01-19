@@ -1,7 +1,7 @@
 .venv/
-temp/
 config.py
 Date Tracker.csv
 .env
 Attachements/
 __pycache__/
+emails.xlsx
