@@ -95,7 +95,7 @@ def process_and_store_article(title, date_str, content, attachments):
     if to_send:
         email = generate_email(encoded_title, content, attachement_id, ', '.join(targets))
         download_attachement(attachement_links)
-        send(encoded_title, email, file_names)
+        send(encoded_title, email, file_names, targets)
 
 parsed_date = read_csv_file(file_path)[-1].split('-')
 scrape_uni_website(parsed_date)

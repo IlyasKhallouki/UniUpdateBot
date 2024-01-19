@@ -59,5 +59,3 @@ def generate_email(title, body, attachments, Targets):
     email = check_for_mistakes(generated_email)
 
     return email
-
-print(generate_email('Nouveau Emploi de temp', '#SEND# #TO:IATE,TCC#', 'IATE.pdf, TCC.pdf', 'IATE, TCC'))

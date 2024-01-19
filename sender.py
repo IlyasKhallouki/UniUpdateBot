@@ -12,15 +12,19 @@ password = os.getenv("EMAIL_PASSWORD")
 
 excel_file_path = './emails.xlsx'
 
-def extract_emails_from_excel(file_path):
-    try:
-        df = pd.read_excel(file_path, header=0, names=['Emails'], usecols=[0])
-        unique_emails = df['Emails'].unique()
+def excel_to_dict(file_path):
+    df = pd.read_excel(file_path)
 
-        return unique_emails
+    excel_dict = {}
 
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    headers = df.columns.tolist()
+
+    for header in headers:
+        excel_dict[header] = df[header].tolist()
+
+    excel_dict["ALL"] = df.values.flatten().tolist()
+
+    return excel_dict
 
 
 async def send_email(email, title, body, attachment_paths):
@@ -45,9 +49,14 @@ async def send_email(email, title, body, attachment_paths):
     except Exception as e:
         print(f"An error occurred: {e}")
 
-async def main(title, body, attachment_names):
-    email_addresses = extract_emails_from_excel(excel_file_path)
-    
+async def main(title, body, attachment_names, targets):
+    email_addresses_dict = excel_to_dict(excel_file_path)
+    email_addresses = []
+
+    for target in targets:
+        for email in email_addresses_dict[target]:
+            email_addresses.append(email)
+
     tasks = [send_email(email, title, body, attachment_names) for email in email_addresses]
 
     await asyncio.gather(*tasks)
