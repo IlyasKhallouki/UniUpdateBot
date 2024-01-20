@@ -9,6 +9,7 @@ import pandas as pd
 
 load_dotenv()
 password = os.getenv("EMAIL_PASSWORD")
+email_address= os.getenv("EMAIL_ADDRESS")
 
 excel_file_path = './emails.xlsx'
 
@@ -29,7 +30,7 @@ def excel_to_dict(file_path):
 
 async def send_email(email, title, body, attachment_paths):
     msg = MIMEMultipart()
-    msg['From'] = 'umiestsender@gmail.com'  
+    msg['From'] = email_address 
     msg['To'] = email
     msg['Subject'] = title
     msg.attach(MIMEText(body, 'plain'))

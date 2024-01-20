@@ -2,9 +2,9 @@ import requests
 from re import sub
 import os
 
-def download_attachement(attachement_links):
-    for link in attachement_links:
-        filename = os.path.join(os.getcwd(), 'Attachements', sub(r'[^\w.-]', '_', link.split('/')[-1]))
+def download_attachment(attachment_links):
+    for link in attachment_links:
+        filename = os.path.join(os.getcwd(), 'Attachments', sub(r'[^\w.-]', '_', link.split('/')[-1]))
         if os.path.exists(filename):
                 print(f"File {filename} already exists. Skipping download.")
                 continue

@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import re
 import csv
 import os
-from AttachementsDownloader import download_attachement
+from AttachmentsDownloader import download_attachment
 from MailGenerator import generate_email
 from sender import send
 
@@ -65,14 +65,18 @@ def scrape_uni_website(old_date:list[str]):
                     article_soup = BeautifulSoup(article_response.text, 'html.parser')
                     content_p = article_soup.find('div', class_='blog-post-inner').find('p')
                     content = content_p.text.strip() if content_p else 'None'
+                    targets_element = article_soup.find('p', id='invisible-text')
 
                     attachments = article_soup.find_all('a', rel='tag')
 
-                process_and_store_article(title, date_str, content, attachments)
+                    if targets_element:
+                        targets = content = targets_element.get_text(strip=True)
+
+                process_and_store_article(title, date_str, content, attachments, targets)
         write_csv_date(file_path, articles[0].find_previous('span', class_='event-place').text.strip())
 
 
-def process_and_store_article(title, date_str, content, attachments):
+def process_and_store_article(title, date_str, content, attachments, targets):
     encoded_title = title.encode('utf-8').decode('utf-8').title()
 
     print(f"Date: {date_str}, Title: {encoded_title}")
@@ -84,17 +88,17 @@ def process_and_store_article(title, date_str, content, attachments):
         print(f"Attachment: {attachment_name} - {attachment_link}")
     print()
 
-    attachement_id = ', '.join([attachement['href'].split('/')[-1] for attachement in attachments])
-    attachement_links = ['https://www.est-umi.ac.ma/'+attachment['href'] for attachment in attachments]
+    attachment_id = ', '.join([attachment['href'].split('/')[-1] for attachment in attachments])
+    attachment_links = ['https://www.est-umi.ac.ma/'+attachment['href'] for attachment in attachments]
     file_names = []
-    for link in attachement_links:
-        file_names.append(os.path.join(os.getcwd(), 'Attachements', re.sub(r'[^\w.-]', '_', link.split('/')[-1])))
+    for link in attachment_links:
+        file_names.append(os.path.join(os.getcwd(), 'attachments', re.sub(r'[^\w.-]', '_', link.split('/')[-1])))
 
-    to_send, targets = check_tags(content)
+    to_send, targets = check_tags(targets)
     
     if to_send:
-        email = generate_email(encoded_title, content, attachement_id, ', '.join(targets))
-        download_attachement(attachement_links)
+        email = generate_email(encoded_title, content, attachment_id, ', '.join(targets))
+        download_attachment(attachment_links)
         send(encoded_title, email, file_names, targets)
 
 parsed_date = read_csv_file(file_path)[-1].split('-')

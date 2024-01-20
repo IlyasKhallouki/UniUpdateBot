@@ -44,7 +44,7 @@ def generate_email(title, body, attachments, Targets):
             },
             {
                 "role": "user",
-                "content": f"Title: {title}\nBody: {body}\nAttachements names: {attachments}\Targets: {Targets}"
+                "content": f"Title: {title}\nBody: {body}\nAttachments names: {attachments}\Targets: {Targets}"
             }
         ],
         temperature=1,
