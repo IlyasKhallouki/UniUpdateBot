@@ -47,6 +47,7 @@ async def send_email(email, title, body, attachment_paths):
         await smtp.login('umiestsender@gmail.com', password)
         await smtp.send_message(msg)
         await smtp.quit()
+        print(f'Email sent to {email}')
     except Exception as e:
         print(f"An error occurred: {e}")
 
@@ -57,10 +58,11 @@ async def main(title, body, attachment_names, targets):
     for target in targets:
         for email in email_addresses_dict[target]:
             email_addresses.append(email)
+    
 
     tasks = [send_email(email, title, body, attachment_names) for email in email_addresses]
 
     await asyncio.gather(*tasks)
 
-def send(title, body, names):
-    asyncio.run(main(title, body, names))
+def send(title, body, names, targets):
+    asyncio.run(main(title, body, names, targets))

@@ -65,18 +65,18 @@ def scrape_uni_website(old_date:list[str]):
                     article_soup = BeautifulSoup(article_response.text, 'html.parser')
                     content_p = article_soup.find('div', class_='blog-post-inner').find('p')
                     content = content_p.text.strip() if content_p else 'None'
-                    targets_element = article_soup.find('p', id='invisible-text')
+                    tag_element = article_soup.find('p', id='invisible-text')
 
                     attachments = article_soup.find_all('a', rel='tag')
 
-                    if targets_element:
-                        targets = content = targets_element.get_text(strip=True)
+                    if tag_element:
+                        tags = content = tag_element.get_text(strip=True)
 
-                process_and_store_article(title, date_str, content, attachments, targets)
+                process_and_store_article(title, date_str, content, attachments, tags)
         write_csv_date(file_path, articles[0].find_previous('span', class_='event-place').text.strip())
 
 
-def process_and_store_article(title, date_str, content, attachments, targets):
+def process_and_store_article(title, date_str, content, attachments, tags):
     encoded_title = title.encode('utf-8').decode('utf-8').title()
 
     print(f"Date: {date_str}, Title: {encoded_title}")
@@ -94,7 +94,7 @@ def process_and_store_article(title, date_str, content, attachments, targets):
     for link in attachment_links:
         file_names.append(os.path.join(os.getcwd(), 'attachments', re.sub(r'[^\w.-]', '_', link.split('/')[-1])))
 
-    to_send, targets = check_tags(targets)
+    to_send, targets = check_tags(tags)
     
     if to_send:
         email = generate_email(encoded_title, content, attachment_id, ', '.join(targets))
