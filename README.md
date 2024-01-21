@@ -12,7 +12,7 @@ This Excel file should contain the list of email recipients. Make sure to struct
 The `Date Tracker.csv` file keeps track of the last update times to avoid duplicate notifications. Update the file with the latest dates as needed.
 
 ### 3. .env File Configuration
-The `.env` file is where sensitive information such as login credentials and API keys are stored. Follow the template provided to fill out the necessary fields:
+The `.env` file is where sensitive information such as login credentials and the OpenAI API keys are stored. Follow the template provided to fill out the necessary fields:
 
 ```plaintext
 OPENAI_API_KEY= Your OpenAI API key
