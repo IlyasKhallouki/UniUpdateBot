@@ -1,7 +1,7 @@
 # UniUpdateBot README for School Staff
 
 ## Introduction
-UniUpdateBot is a user-friendly, automated web scraper designed for school staff to monitor the university's website for real-time updates. It simplifies the process of disseminating timely information by extracting updates and sending structured email notifications to students and professors. No advanced technical knowledge is required; simply set up the `emails.xlsx` and `Date Tracker.csv` files, configure the `.env` file, and the `Attachments` folder to get started.
+UniUpdateBot is a user-friendly, automated web scraper designed for school staff to monitor the university's website for real-time updates. It simplifies the process of disseminating timely information by extracting updates and sending structured email notifications to students and professors. No advanced technical knowledge is required; to get started: simply set up the `emails.xlsx` and `Date Tracker.csv` files, configure the `.env` file, and the `Attachments` folder.
 
 ## Setup and Configuration
 
